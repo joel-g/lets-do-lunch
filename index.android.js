@@ -24,6 +24,24 @@ export default class LetsDoLunch extends Component {
     }
   }
 
+  findMiddle(myLoc, theirLoc) {
+    if (myLoc.lat > 0) {
+       let meetLat = (myLoc.lat + theirLoc.lat) / 2
+    } else {
+      let meetLat = (myLoc.lat - theirLoc.lat) / 2
+    };
+    if (myLoc.lon > 0) {
+      let meetLon = (myLoc.lat + theirLoc.lat) / 2
+    } else {
+      let meetLon = (myLoc.lat - theirLoc.lat) / 2
+    }
+    let midPoint = {
+      lat: meetLat,
+      lon: meetLon,
+    }
+    return midPoint;
+  }
+
   pickLocation(person) {
     RNGooglePlaces.openPlacePickerModal().then((place) => {
       if (person === 'user') {
