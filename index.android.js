@@ -9,10 +9,22 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
+import RNGooglePlaces from 'react-native-google-places';
+
 
 export default class LetsDoLunch extends Component {
+  openSearchModal() {
+  RNGooglePlaces.openPlacePickerModal().then((place) => {
+  console.log(place);
+  // place represents user's selection from the
+  // suggestions and it is a simplified Google Place object.
+  })
+  .catch(error => console.log(error.message));  // error is a Javascript Error object
+}
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -21,7 +33,11 @@ export default class LetsDoLunch extends Component {
             {"Let's Do Lunch"}
           </Text>
         </View>
-        <View style={{flex: 2, backgroundColor: 'skyblue'}} />
+        <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+          <TouchableOpacity onPress={() => this.openSearchModal()}>
+            <Text>Open Place Picker</Text>
+          </TouchableOpacity>
+        </View>
         <View style={{flex: 3, backgroundColor: 'steelblue'}} />
       </View>
     )
