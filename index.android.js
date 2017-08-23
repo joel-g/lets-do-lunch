@@ -16,14 +16,26 @@ import RNGooglePlaces from 'react-native-google-places';
 
 
 export default class LetsDoLunch extends Component {
-  openSearchModal() {
-  RNGooglePlaces.openPlacePickerModal().then((place) => {
-  console.log(place);
-  // place represents user's selection from the
-  // suggestions and it is a simplified Google Place object.
-  })
-  .catch(error => console.log(error.message));  // error is a Javascript Error object
-}
+  constructor(props) {
+    super(props);
+    this.state = {
+      userLocation: {},
+      friendLocation: {}
+    }
+  }
+
+  pickLocation(person) {
+    RNGooglePlaces.openPlacePickerModal().then((place) => {
+      if (person === 'user') {
+        this.setState({userLocation: place})
+      } else {
+        this.setState({friendLocation: place})
+      }
+    // place represents user's selection from the
+    // suggestions and it is a simplified Google Place object.
+    })
+    .catch(error => console.log(error.message));  // error is a Javascript Error object
+  }
 
   render() {
     return (
@@ -34,11 +46,18 @@ export default class LetsDoLunch extends Component {
           </Text>
         </View>
         <View style={{flex: 2, backgroundColor: 'skyblue'}}>
-          <TouchableOpacity onPress={() => this.openSearchModal()}>
-            <Text>Open Place Picker</Text>
+          <TouchableOpacity onPress={() => this.pickLocation('user')}>
+            <Text>Pick your location</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.pickLocation('friend')}>
+            <Text>{"Pick your friend's location"}</Text>
           </TouchableOpacity>
         </View>
-        <View style={{flex: 3, backgroundColor: 'steelblue'}} />
+        <View style={{flex: 3, backgroundColor: 'steelblue'}}>
+          <Text>Your location: {this.state.userLocation.name}</Text>
+          <Text>Friend location: {this.state.friendLocation.name}</Text>
+
+        </View>
       </View>
     )
   }
