@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  Button
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
 
@@ -41,17 +41,13 @@ export default class LetsDoLunch extends Component {
     return (
       <View style={{flex: 1}}>
         <View style={{flex: 1, backgroundColor: 'powderblue'}}>
-          <Text style={styles.text}>
+          <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
         <View style={{flex: 2, backgroundColor: 'skyblue'}}>
-          <TouchableOpacity onPress={() => this.pickLocation('user')}>
-            <Text>Pick your location</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.pickLocation('friend')}>
-            <Text>{"Pick your friend's location"}</Text>
-          </TouchableOpacity>
+          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
+          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
         </View>
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
@@ -64,11 +60,15 @@ export default class LetsDoLunch extends Component {
 }
 
 const styles = StyleSheet.create({
-  text: {
+  heading: {
     fontSize: 50,
     color: 'black',
     textAlign: 'center'
   },
+
+  button: {
+
+  }
 });
 
 AppRegistry.registerComponent('LetsDoLunch', () => LetsDoLunch);
