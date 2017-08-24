@@ -37,7 +37,6 @@ export default class LetsDoLunch extends Component {
       } else {
         meetLon = (myLoc.lon - theirLoc.lon) / 2
       }
-
       var midPoint = {
         lat: meetLat,
         lon: meetLon,
