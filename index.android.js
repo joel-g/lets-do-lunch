@@ -9,45 +9,86 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  Button
 } from 'react-native';
+import RNGooglePlaces from 'react-native-google-places';
+
 
 export default class LetsDoLunch extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userLocation: {},
+      friendLocation: {}
+    }
+  }
+
+  findMiddle(myLoc, theirLoc) {
+      let meetLat;
+      let meetLon;
+      if (myLoc.latitude > 0) {
+         meetLat = (myLoc.latitude + theirLoc.latitude) / 2
+      } else {
+        meetLat = (myLoc.latitude - theirLoc.latitude) / 2
+      };
+      if (myLoc.longitude > 0) {
+        meetLon = (myLoc.longitude + theirLoc.longitude) / 2
+      } else {
+        meetLon = (myLoc.longitude - theirLoc.longitude) / 2
+      }
+      var midPoint = {
+        latitude: meetLat,
+        longitude: meetLon,
+      }
+      return midPoint;
+    }
+
+  pickLocation(person) {
+    RNGooglePlaces.openPlacePickerModal().then((place) => {
+      if (person === 'user') {
+        this.setState({userLocation: place})
+      } else {
+        this.setState({friendLocation: place})
+      }
+    // place represents user's selection from the
+    // suggestions and it is a simplified Google Place object.
+    })
+    .catch(error => console.log(error.message));  // error is a Javascript Error object
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
+      <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'powderblue'}}>
+          <Text style={styles.heading}>
+            {"Let's Do Lunch"}
+          </Text>
+        </View>
+        <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
+          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+        </View>
+        <View style={{flex: 3, backgroundColor: 'steelblue'}}>
+          <Text>Your location: {this.state.userLocation.name}</Text>
+          <Text>Friend location: {this.state.friendLocation.name}</Text>
+
+        </View>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  heading: {
+    fontSize: 50,
+    color: 'black',
+    textAlign: 'center'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+
+  button: {
+
+  }
 });
 
 AppRegistry.registerComponent('LetsDoLunch', () => LetsDoLunch);
