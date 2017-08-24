@@ -13,6 +13,7 @@ import {
   Button
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
+import Polyline from '@mapbox/polyline';
 
 
 export default class LetsDoLunch extends Component {
@@ -20,7 +21,9 @@ export default class LetsDoLunch extends Component {
     super(props);
     this.state = {
       userLocation: {},
-      friendLocation: {}
+      friendLocation: {},
+      midLocation: 'Jams',
+      status: 'not ok'
     }
   }
 
@@ -37,6 +40,46 @@ export default class LetsDoLunch extends Component {
     .catch(error => console.log(error.message));  // error is a Javascript Error object
   }
 
+  // async getDirections(startLoc, destinationLoc) {
+  //   try {
+  //     let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }`)
+  //     let respJson = await resp.json();
+  //     let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+  //     let midPoint = points[points.length/2]
+  //
+  //     let midPointLat = midPoint[0]
+  //     let midPointLong = midPoint[1]
+  //
+  //
+  //     this.setState({midLocation: {
+  //       lat: midPointLat,
+  //       long: midPointLong
+  //     }});
+  //   } catch(error) {
+  //     return error
+  //   }
+  // }
+
+  async getDirections(startLoc, destinationLoc) {
+    try {
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyAZvazUDhm_2wL3S0AVAdf9FkuFoV-KR5Y`)
+        this.setState({status: 'ok'})
+        let respJson = await resp.json();
+        let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        let coords = points.map((point, index) => {
+            return  {
+                latitude : point[0],
+                longitude : point[1]
+            }
+        });
+        this.setState({midLocation: coords[coords.length / 2]});
+        return coords
+    } catch(error) {
+        return error
+    }
+  }
+
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -48,11 +91,12 @@ export default class LetsDoLunch extends Component {
         <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <Button title="Find midpoint" onPress={() => this.getDirections(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
         </View>
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
-
+          <Text>Midpoint: {this.state.midLocation['latitude']}, {this.state.midLocation['longitude']} </Text>
         </View>
       </View>
     )
