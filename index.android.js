@@ -27,19 +27,19 @@ export default class LetsDoLunch extends Component {
   findMiddle(myLoc, theirLoc) {
       let meetLat;
       let meetLon;
-      if (myLoc.lat > 0) {
-         meetLat = (myLoc.lat + theirLoc.lat) / 2
+      if (myLoc.latitude > 0) {
+         meetLat = (myLoc.latitude + theirLoc.latitude) / 2
       } else {
-        meetLat = (myLoc.lat - theirLoc.lat) / 2
+        meetLat = (myLoc.latitude - theirLoc.latitude) / 2
       };
-      if (myLoc.lon > 0) {
-        meetLon = (myLoc.lon + theirLoc.lon) / 2
+      if (myLoc.longitude > 0) {
+        meetLon = (myLoc.longitude + theirLoc.longitude) / 2
       } else {
-        meetLon = (myLoc.lon - theirLoc.lon) / 2
+        meetLon = (myLoc.longitude - theirLoc.longitude) / 2
       }
       var midPoint = {
-        lat: meetLat,
-        lon: meetLon,
+        latitude: meetLat,
+        longitude: meetLon,
       }
       return midPoint;
     }
