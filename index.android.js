@@ -60,26 +60,6 @@ export default class LetsDoLunch extends Component {
     .catch(error => console.log(error.message));  // error is a Javascript Error object
   }
 
-  // async getDirections(startLoc, destinationLoc) {
-  //   try {
-  //     let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }`)
-  //     let respJson = await resp.json();
-  //     let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
-  //     let midPoint = points[points.length/2]
-  //
-  //     let midPointLat = midPoint[0]
-  //     let midPointLong = midPoint[1]
-  //
-  //
-  //     this.setState({midLocation: {
-  //       lat: midPointLat,
-  //       long: midPointLong
-  //     }});
-  //   } catch(error) {
-  //     return error
-  //   }
-  // }
-
   async getDirections(startLoc, destinationLoc) {
     try {
         let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyAZvazUDhm_2wL3S0AVAdf9FkuFoV-KR5Y`)
