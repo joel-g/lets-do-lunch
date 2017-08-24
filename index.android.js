@@ -23,8 +23,7 @@ export default class LetsDoLunch extends Component {
     this.state = {
       userLocation: {},
       friendLocation: {},
-      midLocation: 'Jams',
-      status: 'not ok'
+      midLocation: {},
     }
   }
 
@@ -64,7 +63,6 @@ export default class LetsDoLunch extends Component {
   async getMidPoint(startLoc, destinationLoc) {
     try {
         let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=${ GOOGLE_MAPS_KEY }`)
-        this.setState({status: 'ok'})
         let respJson = await resp.json();
         let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
         let coords = points.map((point, index) => {
