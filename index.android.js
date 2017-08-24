@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
+import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
 
 
 export default class LetsDoLunch extends Component {
@@ -60,9 +61,9 @@ export default class LetsDoLunch extends Component {
     .catch(error => console.log(error.message));  // error is a Javascript Error object
   }
 
-  async getDirections(startLoc, destinationLoc) {
+  async getMidPoint(startLoc, destinationLoc) {
     try {
-        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyAZvazUDhm_2wL3S0AVAdf9FkuFoV-KR5Y`)
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=${ GOOGLE_MAPS_KEY }`)
         this.setState({status: 'ok'})
         let respJson = await resp.json();
         let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
@@ -91,7 +92,7 @@ export default class LetsDoLunch extends Component {
         <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
-          <Button title="Find midpoint" onPress={() => this.getDirections(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
+          <Button title="Find midpoint" onPress={() => this.getMidPoint(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
         </View>
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
