@@ -23,7 +23,7 @@ export default class LetsDoLunch extends Component {
     this.state = {
       userLocation: {},
       friendLocation: {},
-      midLocation: {},
+      midLocation: "",
     }
   }
 
@@ -62,7 +62,7 @@ export default class LetsDoLunch extends Component {
 
   async getMidPoint(startLoc, destinationLoc) {
     try {
-        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=${ GOOGLE_MAPS_KEY }`)
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=${ GOOGLE_MAPS_KEY }`);
         let respJson = await resp.json();
         let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
         let coords = points.map((point, index) => {
@@ -71,8 +71,18 @@ export default class LetsDoLunch extends Component {
                 longitude : point[1]
             }
         });
-        this.setState({midLocation: coords[coords.length / 2]});
-        return coords
+        let midLocation = coords[coords.length / 2];
+        RNGooglePlaces.getAutocompletePredictions('lunch', {
+          type: 'establishments',
+          latitude: midLocation['latitude'],
+          longitude: midLocation['longitude'],
+          radius: 1
+        })
+          .then((place) => {
+              this.setState({midLocation: place[0].fullText});
+          })
+          .catch(error => console.log(error.message));
+        return midLocation
     } catch(error) {
         return error
     }
@@ -95,7 +105,7 @@ export default class LetsDoLunch extends Component {
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
-          <Text>Midpoint: {this.state.midLocation['latitude']}, {this.state.midLocation['longitude']} </Text>
+          <Text>Midpoint: {this.state.midLocation} </Text>
         </View>
       </View>
     )
