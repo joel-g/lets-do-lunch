@@ -12,6 +12,7 @@ import {
   View,
   Button
 } from 'react-native';
+import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
@@ -21,9 +22,15 @@ export default class LetsDoLunch extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userLocation: {},
-      friendLocation: {},
-      midLocation: "",
+      userLocation: {
+        latitude: '47.6067006',
+        longitude: '-122.33250089999999'
+      },
+      friendLocation: {
+        latitude: '47.252876799999996',
+        longitude:  '-122.4442906'
+      },
+      locationData: [],
     }
   }
 
@@ -81,16 +88,26 @@ export default class LetsDoLunch extends Component {
         console.log('coords', coords);
         console.log('length', Math.floor(coords.length / 2))
         let midLocation = coords[Math.floor(coords.length / 2)];
+        return midLocation;
+    } catch(error) {
+        return error
+    }
+  }
+
+    async findLocations(startLoc, destinationLoc) {
+      try {
+        console.log('SUP');
+        let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(6);
-        console.log(midLocation);
-        console.log(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
-        let resp2 = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
+        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
         console.log(7);
-        let resp2Json = await resp2.json();
-        console.log(8);
-        console.log(resp2);
-        console.log(resp2Json);
-        return midLocation
+        let resultsJson = await results.json();
+        // console.log(resp2);
+        // console.log(resp2Json);
+        this.setState({
+          locationData: resultsJson.results
+        });
+        console.log(this.state.locationData);
     } catch(error) {
         return error
     }
@@ -98,6 +115,10 @@ export default class LetsDoLunch extends Component {
 
 
   render() {
+    let locations;
+    if (this.state.locationData.length > 0) {
+      locations = <Location name={this.state.locationData[0].name} />
+    }
     return (
       <View style={{flex: 1}}>
         <View style={{flex: 1, backgroundColor: 'powderblue'}}>
@@ -108,13 +129,14 @@ export default class LetsDoLunch extends Component {
         <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
-          <Button title="Find midpoint" onPress={() => this.getMidPoint(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
+          <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
         </View>
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
           <Text>Midpoint: {this.state.midLocation} </Text>
         </View>
+        {locations}
       </View>
     )
   }
