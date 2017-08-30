@@ -62,26 +62,34 @@ export default class LetsDoLunch extends Component {
 
   async getMidPoint(startLoc, destinationLoc) {
     try {
+        console.log(startLoc, destinationLoc);
+        console.log(1);
         let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=${ GOOGLE_MAPS_KEY }`);
+        console.log(2);
         let respJson = await resp.json();
+        console.log(respJson);
+        console.log(3);
         let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        console.log(4);
         let coords = points.map((point, index) => {
             return  {
                 latitude : point[0],
                 longitude : point[1]
             }
         });
-        let midLocation = coords[coords.length / 2];
-        RNGooglePlaces.getAutocompletePredictions('lunch', {
-          type: 'establishments',
-          latitude: midLocation['latitude'],
-          longitude: midLocation['longitude'],
-          radius: 1
-        })
-          .then((place) => {
-              this.setState({midLocation: place[0].fullText});
-          })
-          .catch(error => console.log(error.message));
+        console.log(5);
+        console.log('coords', coords);
+        console.log('length', Math.floor(coords.length / 2))
+        let midLocation = coords[Math.floor(coords.length / 2)];
+        console.log(6);
+        console.log(midLocation);
+        console.log(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
+        let resp2 = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
+        console.log(7);
+        let resp2Json = await resp2.json();
+        console.log(8);
+        console.log(resp2);
+        console.log(resp2Json);
         return midLocation
     } catch(error) {
         return error
