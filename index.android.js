@@ -16,6 +16,7 @@ import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
+import MapView from 'react-native-maps';
 
 
 export default class LetsDoLunch extends Component {
@@ -31,6 +32,7 @@ export default class LetsDoLunch extends Component {
         longitude:  '-122.4442906'
       },
       locationData: [],
+      currentMode: 'search'
     }
   }
 
@@ -116,8 +118,32 @@ export default class LetsDoLunch extends Component {
 
   render() {
     let locations;
+    let display;
+    let midPointButton;
+    let map;
     if (this.state.locationData.length > 0) {
       locations = <Location name={this.state.locationData[0].name} />
+      map = <View style = {styles.container}>
+        <MapView
+          style = {styles.map}
+          initialRegion = {{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      </View>
+    }
+    if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
+      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
+    }
+    if (this.state.currentMode === 'search') {
+      display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
+          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          {midPointButton}
+        </View>
     }
     return (
       <View style={{flex: 1}}>
@@ -126,17 +152,14 @@ export default class LetsDoLunch extends Component {
             {"Let's Do Lunch"}
           </Text>
         </View>
-        <View style={{flex: 2, backgroundColor: 'skyblue'}}>
-          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
-          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
-          <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
-        </View>
+        {display}
         <View style={{flex: 3, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
           <Text>Midpoint: {this.state.midLocation} </Text>
         </View>
         {locations}
+        {map}
       </View>
     )
   }
@@ -148,9 +171,15 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center'
   },
-
-  button: {
-
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    height: 250,
+    width: 250,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   }
 });
 
