@@ -18,22 +18,24 @@ import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
 import MapView from 'react-native-maps';
 
-
 export default class LetsDoLunch extends Component {
   constructor(props) {
     super(props);
     this.state = {
       userLocation: {
-        latitude: '47.6067006',
-        longitude: '-122.33250089999999'
+        latitude: 47.6067006,
+        longitude: -122.33250089999999
       },
       friendLocation: {
-        latitude: '47.252876799999996',
-        longitude:  '-122.4442906'
+        latitude: 47.252876799999996,
+        longitude:  -122.4442906
       },
       locationData: [],
-      currentMode: 'search'
-    }
+      currentMode: 'search',
+      midPoint: null,
+      region: {}
+    };
+    this.onRegionChange = this.onRegionChange.bind(this);
   }
 
   findMiddle(myLoc, theirLoc) {
@@ -100,19 +102,63 @@ export default class LetsDoLunch extends Component {
       try {
         console.log('SUP');
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
+        console.log(midLocation);
         console.log(6);
         let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
         console.log(7);
         let resultsJson = await results.json();
-        // console.log(resp2);
+        console.log(8);
         // console.log(resp2Json);
         this.setState({
-          locationData: resultsJson.results
+          locationData: resultsJson.results,
+          midPoint: midLocation,
+          region: {
+            latitude: midLocation.latitude,
+            longitude: midLocation.longitude,
+            latitudeDelta: .0750537,
+            longitudeDelta: .11132
+          }
         });
         console.log(this.state.locationData);
     } catch(error) {
         return error
     }
+  }
+
+  regionContainingPoints(points) {
+    var minX, maxX, minY, maxY;
+
+    // init first point
+    ((point) => {
+      minX = point.geometry.location.lat;
+      maxX = point.geometry.location.lat;
+      minY = point.geometry.location.lng;
+      maxY = point.geometry.location.lng;
+    })(points[0]);
+
+    // calculate rect
+    points.map((point) => {
+      minX = Math.min(minX, point.geometry.location.lat);
+      maxX = Math.max(maxX, point.geometry.location.lat);
+      minY = Math.min(minY, point.geometry.location.lng);
+      maxY = Math.max(maxY, point.geometry.location.lng);
+    });
+
+    var midX = (minX + maxX) / 2;
+    var midY = (minY + maxY) / 2;
+    var midPoint = [midX, midY];
+
+    var deltaX = (maxX - minX);
+    var deltaY = (maxY - minY);
+
+    return {
+      latitude: midX, longitude: midY,
+      latitudeDelta: deltaX, longitudeDelta: deltaY,
+    };
+  }
+
+  onRegionChange(region) {
+    this.setState({ region });
   }
 
 
@@ -121,17 +167,15 @@ export default class LetsDoLunch extends Component {
     let display;
     let midPointButton;
     let map;
-    if (this.state.locationData.length > 0) {
-      locations = <Location name={this.state.locationData[0].name} />
+    if (this.state.midPoint) {
+      console.log('map reached')
+      locations = <Location name={this.state.locationData[0].name} />;
+      let region = this.regionContainingPoints(this.state.locationData);
       map = <View style = {styles.container}>
         <MapView
           style = {styles.map}
-          initialRegion = {{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+          region={this.state.region}
+          onRegionChange={this.onRegionChange}
         />
       </View>
     }
@@ -157,6 +201,10 @@ export default class LetsDoLunch extends Component {
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
           <Text>Midpoint: {this.state.midLocation} </Text>
+          <Text>map lat: {this.state.region.latitude}</Text>
+          <Text>map long: {this.state.region.longitude}</Text>
+          <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
+          <Text>map long delta: {this.state.region.longitudeDelta}</Text>
         </View>
         {locations}
         {map}
