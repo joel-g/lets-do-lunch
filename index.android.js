@@ -110,14 +110,9 @@ export default class LetsDoLunch extends Component {
         console.log(8);
         // console.log(resp2Json);
         this.setState({
-          locationData: resultsJson.results,
+          locationData: resultsJson.results.slice(0, 5),
           midPoint: midLocation,
-          region: {
-            latitude: midLocation.latitude,
-            longitude: midLocation.longitude,
-            latitudeDelta: .0750537,
-            longitudeDelta: .11132
-          }
+          region: {}
         });
         console.log(this.state.locationData);
     } catch(error) {
@@ -148,8 +143,8 @@ export default class LetsDoLunch extends Component {
     var midY = (minY + maxY) / 2;
     var midPoint = [midX, midY];
 
-    var deltaX = (maxX - minX);
-    var deltaY = (maxY - minY);
+    var deltaX = (maxX - minX) * 1.5;
+    var deltaY = (maxY - minY) * 1.5;
 
     return {
       latitude: midX, longitude: midY,
@@ -173,9 +168,21 @@ export default class LetsDoLunch extends Component {
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
-          region          = {this.state.region}
+          region          = {region}
           onRegionChange  = {this.onRegionChange}
-        />
+        >
+          {this.state.locationData.map(marker => (
+            <MapView.Marker
+              coordinate={{
+                latitude: marker.geometry.location.lat,
+                longitude: marker.geometry.location.lng
+              }}
+              title={marker.name}
+              description={marker.vicinity}
+              key={marker.id}
+            />
+          ))}
+        </MapView>
       </View>
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
