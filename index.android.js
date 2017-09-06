@@ -168,7 +168,6 @@ export default class LetsDoLunch extends Component {
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
-          region          = {region}
           onRegionChange  = {this.onRegionChange}
         >
           {this.state.locationData.map(marker => (
@@ -221,7 +220,7 @@ export default class LetsDoLunch extends Component {
 
 const styles = StyleSheet.create({
   heading: {
-    fontSize: 50,
+    fontSize: 30,
     color: 'black',
     textAlign: 'center'
   },
@@ -234,6 +233,10 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  button: {
+    width: 33,
+    backgroundColor: 'red',
   }
 });
 
