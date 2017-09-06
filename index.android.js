@@ -161,7 +161,6 @@ export default class LetsDoLunch extends Component {
     this.setState({ region });
   }
 
-
   render() {
     let locations;
     let display;
@@ -173,9 +172,9 @@ export default class LetsDoLunch extends Component {
       let region = this.regionContainingPoints(this.state.locationData);
       map = <View style = {styles.container}>
         <MapView
-          style = {styles.map}
-          region={this.state.region}
-          onRegionChange={this.onRegionChange}
+          style           = {styles.map}
+          region          = {this.state.region}
+          onRegionChange  = {this.onRegionChange}
         />
       </View>
     }
