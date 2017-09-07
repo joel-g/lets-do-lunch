@@ -1,16 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  TextInput
 } from 'react-native';
 import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
@@ -33,7 +28,8 @@ export default class LetsDoLunch extends Component {
       locationData: [],
       currentMode: 'search',
       midPoint: null,
-      region: {}
+      region: {},
+      cuisine: null,
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -190,7 +186,12 @@ export default class LetsDoLunch extends Component {
     if (this.state.currentMode === 'search') {
       display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
-          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <TextInput
+          style={{height: 40}}
+          placeholder="Mexican, Italian, Burgers, etc"
+          onChangeText={(text) => this.setState({cuisine: text})}
+          /> 
           {midPointButton}
         </View>
     }
@@ -210,6 +211,7 @@ export default class LetsDoLunch extends Component {
           <Text>map long: {this.state.region.longitude}</Text>
           <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
           <Text>map long delta: {this.state.region.longitudeDelta}</Text>
+          <Text>cuisine: {this.state.cuisine}</Text>
         </View>
         {locations}
         {map}
@@ -235,8 +237,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   button: {
-    width: 33,
     backgroundColor: 'red',
+    fontSize: 30,
   }
 });
 
