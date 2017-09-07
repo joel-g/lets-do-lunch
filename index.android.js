@@ -29,7 +29,7 @@ export default class LetsDoLunch extends Component {
       currentMode: 'search',
       midPoint: null,
       region: {},
-      category: null,
+      category: 'lunch',
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -181,7 +181,7 @@ export default class LetsDoLunch extends Component {
       </View>
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
-      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
+      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
     }
     if (this.state.currentMode === 'search') {
       display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
