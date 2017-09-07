@@ -167,6 +167,7 @@ export default class LetsDoLunch extends Component {
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
+          region          = {region}
           onRegionChange  = {this.onRegionChange}
         >
           {this.state.locationData.map(marker => (
@@ -195,6 +196,7 @@ export default class LetsDoLunch extends Component {
           placeholder="Mexican, Italian, Burgers, etc"
           onChangeText={(text) => this.setState({category: text})}
           /> 
+         
           {/* <RadioForm
             radio_props={radio_props}
             initial={0}
