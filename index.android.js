@@ -1,22 +1,18 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  TextInput
 } from 'react-native';
 import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
 import MapView from 'react-native-maps';
+// import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 export default class LetsDoLunch extends Component {
   constructor(props) {
@@ -33,7 +29,9 @@ export default class LetsDoLunch extends Component {
       locationData: [],
       currentMode: 'search',
       midPoint: null,
-      region: {}
+      region: {},
+      category: 'lunch',
+      type: 'restaurant',
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -104,7 +102,7 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
+        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=restaurant&keyword=${ this.state.category }&rankby=distance`);
         console.log(7);
         let resultsJson = await results.json();
         console.log(8);
@@ -156,6 +154,7 @@ export default class LetsDoLunch extends Component {
     this.setState({ region });
   }
 
+  
   render() {
     let locations;
     let display;
@@ -186,12 +185,23 @@ export default class LetsDoLunch extends Component {
       </View>
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
-      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
-    }
-    if (this.state.currentMode === 'search') {
-      display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
+      }
+      if (this.state.currentMode === 'search') {
+        display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
-          <Button title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <TextInput
+          style={{height: 40}}
+          placeholder="Mexican, Italian, Burgers, etc"
+          onChangeText={(text) => this.setState({category: text})}
+          /> 
+         
+          {/* <RadioForm
+            radio_props={radio_props}
+            initial={0}
+            onPress={(value) => {this.setState({type: value})}}
+          /> */}
           {midPointButton}
         </View>
     }
@@ -211,6 +221,7 @@ export default class LetsDoLunch extends Component {
           <Text>map long: {this.state.region.longitude}</Text>
           <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
           <Text>map long delta: {this.state.region.longitudeDelta}</Text>
+          <Text>category: {this.state.category}</Text>
         </View>
         {locations}
         {map}
@@ -219,9 +230,33 @@ export default class LetsDoLunch extends Component {
   }
 }
 
+// var RadioButtonProject = React.createClass({
+//   getInitialState: function() {
+//     return {
+//       value: 0,
+//     }
+//   },
+//   render: function() {
+//     return (
+//       <View>
+//         <RadioForm
+//           radio_props={radio_props}
+//           initial={0}
+//           onPress={(value) => {this.setState({type:value})}}
+//         />
+//       </View>
+//     );
+//   }
+// });
+
+// const radio_props = [
+//   {label: 'restaurant', value: 0 },
+//   {label: 'tavern', value: 1 }
+// ];
+
 const styles = StyleSheet.create({
   heading: {
-    fontSize: 50,
+    fontSize: 30,
     color: 'black',
     textAlign: 'center'
   },
@@ -234,6 +269,10 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  button: {
+    backgroundColor: 'red',
+    fontSize: 30,
   }
 });
 
