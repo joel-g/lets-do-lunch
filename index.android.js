@@ -12,6 +12,7 @@ import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
 import MapView from 'react-native-maps';
+// import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 export default class LetsDoLunch extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class LetsDoLunch extends Component {
       midPoint: null,
       region: {},
       category: 'lunch',
+      type: 'restaurant',
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -152,6 +154,7 @@ export default class LetsDoLunch extends Component {
     this.setState({ region });
   }
 
+  
   render() {
     let locations;
     let display;
@@ -182,9 +185,9 @@ export default class LetsDoLunch extends Component {
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
-    }
-    if (this.state.currentMode === 'search') {
-      display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+      }
+      if (this.state.currentMode === 'search') {
+        display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
@@ -192,6 +195,11 @@ export default class LetsDoLunch extends Component {
           placeholder="Mexican, Italian, Burgers, etc"
           onChangeText={(text) => this.setState({category: text})}
           /> 
+          {/* <RadioForm
+            radio_props={radio_props}
+            initial={0}
+            onPress={(value) => {this.setState({type: value})}}
+          /> */}
           {midPointButton}
         </View>
     }
@@ -219,6 +227,30 @@ export default class LetsDoLunch extends Component {
     )
   }
 }
+
+// var RadioButtonProject = React.createClass({
+//   getInitialState: function() {
+//     return {
+//       value: 0,
+//     }
+//   },
+//   render: function() {
+//     return (
+//       <View>
+//         <RadioForm
+//           radio_props={radio_props}
+//           initial={0}
+//           onPress={(value) => {this.setState({type:value})}}
+//         />
+//       </View>
+//     );
+//   }
+// });
+
+// const radio_props = [
+//   {label: 'restaurant', value: 0 },
+//   {label: 'tavern', value: 1 }
+// ];
 
 const styles = StyleSheet.create({
   heading: {
