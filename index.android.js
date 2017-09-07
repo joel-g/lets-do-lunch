@@ -29,7 +29,7 @@ export default class LetsDoLunch extends Component {
       currentMode: 'search',
       midPoint: null,
       region: {},
-      cuisine: null,
+      category: null,
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -100,7 +100,7 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${midLocation.latitude},${midLocation.longitude}&type=restaurant&keyword=teriyaki&rankby=distance`);
+        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=restaurant&keyword=${ this.state.category }&rankby=distance`);
         console.log(7);
         let resultsJson = await results.json();
         console.log(8);
@@ -181,7 +181,7 @@ export default class LetsDoLunch extends Component {
       </View>
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
-      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation['latitude'].toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
+      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation['longitude'].toString(), this.state.friendLocation['latitude'].toString() + ", " + this.state.friendLocation['longitude'].toString())} />
     }
     if (this.state.currentMode === 'search') {
       display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
@@ -190,7 +190,7 @@ export default class LetsDoLunch extends Component {
           <TextInput
           style={{height: 40}}
           placeholder="Mexican, Italian, Burgers, etc"
-          onChangeText={(text) => this.setState({cuisine: text})}
+          onChangeText={(text) => this.setState({category: text})}
           /> 
           {midPointButton}
         </View>
@@ -211,7 +211,7 @@ export default class LetsDoLunch extends Component {
           <Text>map long: {this.state.region.longitude}</Text>
           <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
           <Text>map long delta: {this.state.region.longitudeDelta}</Text>
-          <Text>cuisine: {this.state.cuisine}</Text>
+          <Text>category: {this.state.category}</Text>
         </View>
         {locations}
         {map}
