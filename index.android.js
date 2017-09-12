@@ -6,7 +6,8 @@ import {
   View,
   Button,
   TextInput,
-  Picker
+  Picker,
+  Linking
 } from 'react-native';
 import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
@@ -31,7 +32,7 @@ export default class LetsDoLunch extends Component {
       currentMode: 'search',
       midPoint: null,
       region: {},
-      category: 'lunch',
+      category: '',
       type: 'restaurant',
     };
     this.onRegionChange = this.onRegionChange.bind(this);
@@ -103,11 +104,12 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&rankby=distance`);
-        console.log(7);
+        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&rankby=distance`
+        let results = await fetch(url);
+        console.log(7, url);
         let resultsJson = await results.json();
         console.log(8);
-        // console.log(resp2Json);
+        console.log(resultsJson);
         this.setState({
           locationData: resultsJson.results.slice(0, 5),
           midPoint: midLocation,
@@ -179,6 +181,8 @@ export default class LetsDoLunch extends Component {
               title={marker.name}
               description={marker.vicinity}
               key={marker.id}
+              
+              onCalloutPress={() => {Linking.openURL('http://www.google.com/maps/search/?api=1&query=' + marker.name.split(" ").join("+") + `&query_place_id=${marker.place_id}`)}}
             />
           ))}
         </MapView>
@@ -189,11 +193,11 @@ export default class LetsDoLunch extends Component {
       }
       if (this.state.currentMode === 'search') {
         display = <View style={{flex: .4, backgroundColor: 'skyblue'}}>
-          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
+          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
           <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
           style={{height: 40}}
-          placeholder="Mexican, Italian, Burgers, etc"
+          placeholder="keywords"
           onChangeText={(text) => this.setState({category: text})}
           /> 
          
@@ -216,10 +220,10 @@ export default class LetsDoLunch extends Component {
         <Picker 
           selectedValue={this.state.type}
           onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
-        <Picker.Item label='Restaurant' value='restaurant' />
-        <Picker.Item label='Bar/Tavern' value='bar' />
-        <Picker.Item label='Café' value='cafe' />
-        <Picker.Item label='Park' value='park' />
+          <Picker.Item label='Restaurant' value='restaurant' />
+          <Picker.Item label='Bar/Tavern' value='bar' />
+          <Picker.Item label='Café' value='cafe' />
+          <Picker.Item label='Park' value='park' />
         </Picker> 
         <View style={{flex: 1, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
