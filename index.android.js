@@ -5,7 +5,9 @@ import {
   Text,
   View,
   Button,
-  TextInput
+  TextInput,
+  Picker,
+  Linking
 } from 'react-native';
 import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
@@ -30,7 +32,7 @@ export default class LetsDoLunch extends Component {
       currentMode: 'search',
       midPoint: null,
       region: {},
-      category: 'lunch',
+      category: '',
       type: 'restaurant',
     };
     this.onRegionChange = this.onRegionChange.bind(this);
@@ -102,15 +104,16 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=restaurant&keyword=${ this.state.category }&rankby=distance`);
-        console.log(7);
+        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&radius=3000`
+        let results = await fetch(url);
+        console.log(7, url);
         let resultsJson = await results.json();
         console.log(8);
-        // console.log(resp2Json);
+        console.log(resultsJson);
         this.setState({
           locationData: resultsJson.results.slice(0, 5),
           midPoint: midLocation,
-          region: {}
+          region: this.regionContainingPoints(resultsJson.results.slice(0, 5))
         });
         console.log(this.state.locationData);
     } catch(error) {
@@ -163,11 +166,10 @@ export default class LetsDoLunch extends Component {
     if (this.state.midPoint) {
       console.log('map reached')
       locations = <Location name={this.state.locationData[0].name} />;
-      let region = this.regionContainingPoints(this.state.locationData);
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
-          region          = {region}
+          region          = {this.state.region}
           onRegionChange  = {this.onRegionChange}
         >
           {this.state.locationData.map(marker => (
@@ -179,6 +181,8 @@ export default class LetsDoLunch extends Component {
               title={marker.name}
               description={marker.vicinity}
               key={marker.id}
+              
+              onCalloutPress={() => {Linking.openURL('http://www.google.com/maps/search/?api=1&query=' + marker.name.split(" ").join("+") + `&query_place_id=${marker.place_id}`)}}
             />
           ))}
         </MapView>
@@ -188,12 +192,12 @@ export default class LetsDoLunch extends Component {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
       if (this.state.currentMode === 'search') {
-        display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
-          <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
+        display = <View style={{flex: .4, backgroundColor: 'skyblue'}}>
+          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
           <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
           style={{height: 40}}
-          placeholder="Mexican, Italian, Burgers, etc"
+          placeholder="keywords"
           onChangeText={(text) => this.setState({category: text})}
           /> 
          
@@ -207,13 +211,21 @@ export default class LetsDoLunch extends Component {
     }
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: 'powderblue'}}>
+        <View style={{flex: .14, backgroundColor: 'powderblue'}}>
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
         {display}
-        <View style={{flex: 3, backgroundColor: 'steelblue'}}>
+        <Picker 
+          selectedValue={this.state.type}
+          onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
+          <Picker.Item label='Restaurant' value='restaurant' />
+          <Picker.Item label='Bar/Tavern' value='bar' />
+          <Picker.Item label='Café' value='cafe' />
+          <Picker.Item label='Park' value='park' />
+        </Picker> 
+        <View style={{flex: 1, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
           <Text>Midpoint: {this.state.midLocation} </Text>
@@ -261,14 +273,19 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-    ...StyleSheet.absoluteFillObject,
+
     height: 250,
-    width: 250,
+
     justifyContent: 'flex-end',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    
   },
   button: {
     backgroundColor: 'red',
