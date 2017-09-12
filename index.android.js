@@ -110,7 +110,7 @@ export default class LetsDoLunch extends Component {
         this.setState({
           locationData: resultsJson.results.slice(0, 5),
           midPoint: midLocation,
-          region: {}
+          region: this.regionContainingPoints(resultsJson.results.slice(0, 5))
         });
         console.log(this.state.locationData);
     } catch(error) {
@@ -163,11 +163,10 @@ export default class LetsDoLunch extends Component {
     if (this.state.midPoint) {
       console.log('map reached')
       locations = <Location name={this.state.locationData[0].name} />;
-      let region = this.regionContainingPoints(this.state.locationData);
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
-          region          = {region}
+          region          = {this.state.region}
           onRegionChange  = {this.onRegionChange}
         >
           {this.state.locationData.map(marker => (
@@ -188,7 +187,7 @@ export default class LetsDoLunch extends Component {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
       if (this.state.currentMode === 'search') {
-        display = <View style={{flex: 2, backgroundColor: 'skyblue'}}>
+        display = <View style={{flex: 1, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
@@ -207,13 +206,13 @@ export default class LetsDoLunch extends Component {
     }
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: 'powderblue'}}>
+        <View style={{flex: .2, backgroundColor: 'powderblue'}}>
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
         {display}
-        <View style={{flex: 3, backgroundColor: 'steelblue'}}>
+        <View style={{flex: 1, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
           <Text>Midpoint: {this.state.midLocation} </Text>
