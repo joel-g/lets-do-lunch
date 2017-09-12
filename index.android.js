@@ -32,8 +32,9 @@ export default class LetsDoLunch extends Component {
       currentMode: 'search',
       midPoint: null,
       region: {},
-      category: '',
+      keyword: '',
       type: 'restaurant',
+      radius: 1609
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -104,7 +105,7 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&radius=3000`
+        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.keyword }&radius=${ this.state.radius }`
         let results = await fetch(url);
         console.log(7, url);
         let resultsJson = await results.json();
@@ -198,7 +199,7 @@ export default class LetsDoLunch extends Component {
           <TextInput
           style={{height: 40}}
           placeholder="keywords"
-          onChangeText={(text) => this.setState({category: text})}
+          onChangeText={(text) => this.setState({keyword: text})}
           /> 
          
           {/* <RadioForm
@@ -225,6 +226,15 @@ export default class LetsDoLunch extends Component {
           <Picker.Item label='Café' value='cafe' />
           <Picker.Item label='Park' value='park' />
         </Picker> 
+        <Picker 
+          selectedValue={this.state.radius}
+          onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
+          <Picker.Item label='1 mi' value='1609' />
+          <Picker.Item label='2 mi' value='3218' />
+          <Picker.Item label='3 mi' value='4829' />
+          <Picker.Item label='4 mi' value='6437' />
+          <Picker.Item label='5 mi' value='8046' />
+        </Picker> 
         <View style={{flex: 1, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
@@ -233,7 +243,7 @@ export default class LetsDoLunch extends Component {
           <Text>map long: {this.state.region.longitude}</Text>
           <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
           <Text>map long delta: {this.state.region.longitudeDelta}</Text>
-          <Text>category: {this.state.category}</Text>
+          <Text>category: {this.state.keyword}</Text>
         </View>
         {locations}
         {map}
