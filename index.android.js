@@ -261,14 +261,19 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-    ...StyleSheet.absoluteFillObject,
+
     height: 250,
-    width: 250,
+
     justifyContent: 'flex-end',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    
   },
   button: {
     backgroundColor: 'red',
