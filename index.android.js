@@ -5,7 +5,8 @@ import {
   Text,
   View,
   Button,
-  TextInput
+  TextInput,
+  Picker
 } from 'react-native';
 import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
@@ -102,7 +103,7 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=restaurant&keyword=${ this.state.category }&rankby=distance`);
+        let results = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&rankby=distance`);
         console.log(7);
         let resultsJson = await results.json();
         console.log(8);
@@ -187,7 +188,7 @@ export default class LetsDoLunch extends Component {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
       if (this.state.currentMode === 'search') {
-        display = <View style={{flex: 1, backgroundColor: 'skyblue'}}>
+        display = <View style={{flex: .4, backgroundColor: 'skyblue'}}>
           <Button title="Pick your location" onPress={() => this.pickLocation('user')} />
           <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
@@ -206,12 +207,20 @@ export default class LetsDoLunch extends Component {
     }
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: .2, backgroundColor: 'powderblue'}}>
+        <View style={{flex: .14, backgroundColor: 'powderblue'}}>
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
         {display}
+        <Picker 
+          selectedValue={this.state.type}
+          onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
+        <Picker.Item label='Restaurant' value='restaurant' />
+        <Picker.Item label='Bar/Tavern' value='bar' />
+        <Picker.Item label='Café' value='cafe' />
+        <Picker.Item label='Park' value='park' />
+        </Picker> 
         <View style={{flex: 1, backgroundColor: 'steelblue'}}>
           <Text>Your location: {this.state.userLocation.name}</Text>
           <Text>Friend location: {this.state.friendLocation.name}</Text>
