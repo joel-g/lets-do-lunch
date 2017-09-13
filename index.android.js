@@ -9,7 +9,6 @@ import {
   Picker,
   Linking
 } from 'react-native';
-import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
@@ -160,13 +159,15 @@ export default class LetsDoLunch extends Component {
 
   
   render() {
-    let locations;
     let display;
     let midPointButton;
-    let map;
+    let map = <View style={{flex: 1, backgroundColor: 'steelblue'}}>
+          <Text>Step 1: Set your location.</Text>
+          <Text>Step 2: Set your friends location.</Text>
+          <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
+        </View>;
     if (this.state.midPoint) {
       console.log('map reached')
-      locations = <Location name={this.state.locationData[0].name} />;
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
@@ -229,23 +230,12 @@ export default class LetsDoLunch extends Component {
         <Picker 
           selectedValue={this.state.radius}
           onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
-          <Picker.Item label='1 mi' value='1609' />
-          <Picker.Item label='2 mi' value='3218' />
-          <Picker.Item label='3 mi' value='4829' />
-          <Picker.Item label='4 mi' value='6437' />
-          <Picker.Item label='5 mi' value='8046' />
+          <Picker.Item label='1 mi radius' value='1609' />
+          <Picker.Item label='2 mi radius' value='3218' />
+          <Picker.Item label='3 mi radius' value='4829' />
+          <Picker.Item label='4 mi radius' value='6437' />
+          <Picker.Item label='5 mi radius' value='8046' />
         </Picker> 
-        <View style={{flex: 1, backgroundColor: 'steelblue'}}>
-          <Text>Your location: {this.state.userLocation.name}</Text>
-          <Text>Friend location: {this.state.friendLocation.name}</Text>
-          <Text>Midpoint: {this.state.midLocation} </Text>
-          <Text>map lat: {this.state.region.latitude}</Text>
-          <Text>map long: {this.state.region.longitude}</Text>
-          <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
-          <Text>map long delta: {this.state.region.longitudeDelta}</Text>
-          <Text>category: {this.state.keyword}</Text>
-        </View>
-        {locations}
         {map}
       </View>
     )
