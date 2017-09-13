@@ -9,7 +9,6 @@ import {
   Picker,
   Linking
 } from 'react-native';
-import Location from './location';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
 import { GOOGLE_MAPS_KEY } from 'react-native-dotenv';
@@ -29,11 +28,11 @@ export default class LetsDoLunch extends Component {
         longitude:  -122.4442906
       },
       locationData: [],
-      currentMode: 'search',
       midPoint: null,
       region: {},
-      category: '',
+      keyword: '',
       type: 'restaurant',
+      radius: 1609
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -104,7 +103,7 @@ export default class LetsDoLunch extends Component {
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
         console.log(6);
-        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.category }&radius=3000`
+        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${ GOOGLE_MAPS_KEY }&location=${ midLocation.latitude },${ midLocation.longitude }&type=${this.state.type}&keyword=${ this.state.keyword }&radius=${ this.state.radius }`
         let results = await fetch(url);
         console.log(7, url);
         let resultsJson = await results.json();
@@ -159,13 +158,15 @@ export default class LetsDoLunch extends Component {
 
   
   render() {
-    let locations;
     let display;
     let midPointButton;
-    let map;
+    let map = <View style={{flex: 1.2, backgroundColor: 'steelblue'}}>
+          <Text>Step 1: Set your location.</Text>
+          <Text>Step 2: Set your friends location.</Text>
+          <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
+        </View>;
     if (this.state.midPoint) {
       console.log('map reached')
-      locations = <Location name={this.state.locationData[0].name} />;
       map = <View style = {styles.container}>
         <MapView
           style           = {styles.map}
@@ -191,51 +192,44 @@ export default class LetsDoLunch extends Component {
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
-      if (this.state.currentMode === 'search') {
-        display = <View style={{flex: .4, backgroundColor: 'skyblue'}}>
-          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
-          <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
-          <TextInput
-          style={{height: 40}}
-          placeholder="keywords"
-          onChangeText={(text) => this.setState({category: text})}
-          /> 
-         
-          {/* <RadioForm
-            radio_props={radio_props}
-            initial={0}
-            onPress={(value) => {this.setState({type: value})}}
-          /> */}
-          {midPointButton}
-        </View>
-    }
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: .14, backgroundColor: 'powderblue'}}>
+        <View style={{flex: .2, backgroundColor: 'powderblue'}}>
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
-        {display}
-        <Picker 
-          selectedValue={this.state.type}
-          onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
-          <Picker.Item label='Restaurant' value='restaurant' />
-          <Picker.Item label='Bar/Tavern' value='bar' />
-          <Picker.Item label='Café' value='cafe' />
-          <Picker.Item label='Park' value='park' />
-        </Picker> 
-        <View style={{flex: 1, backgroundColor: 'steelblue'}}>
-          <Text>Your location: {this.state.userLocation.name}</Text>
-          <Text>Friend location: {this.state.friendLocation.name}</Text>
-          <Text>Midpoint: {this.state.midLocation} </Text>
-          <Text>map lat: {this.state.region.latitude}</Text>
-          <Text>map long: {this.state.region.longitude}</Text>
-          <Text>map lat delta: {this.state.region.latitudeDelta}</Text>
-          <Text>map long delta: {this.state.region.longitudeDelta}</Text>
-          <Text>category: {this.state.category}</Text>
+        <View style={{flex: 0.66, backgroundColor: 'skyblue'}}>
+          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
+          <Button color="blue" title="Set your friend's location" onPress={() => this.pickLocation('friend')} />
+          <TextInput
+          style={{height: 50}}
+          placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
+          onChangeText={(text) => this.setState({keyword: text})}
+          /> 
         </View>
-        {locations}
+        <View style={{flex: 0.75}}>
+          <Picker 
+            style = {styles.picker}
+            selectedValue={this.state.type}
+            onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
+            <Picker.Item label='Restaurant' value='restaurant' />
+            <Picker.Item label='Bar/Tavern' value='bar' />
+            <Picker.Item label='Café' value='cafe' />
+            <Picker.Item label='Park' value='park' />
+          </Picker> 
+          <Picker 
+            style = {styles.picker}
+            selectedValue={this.state.radius}
+            onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
+            <Picker.Item label='1 mi radius' value='1609' />
+            <Picker.Item label='2 mi radius' value='3218' />
+            <Picker.Item label='3 mi radius' value='4829' />
+            <Picker.Item label='4 mi radius' value='6437' />
+            <Picker.Item label='5 mi radius' value='8046' />
+          </Picker> 
+          {midPointButton}
+        </View>
         {map}
       </View>
     )
@@ -273,9 +267,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-
-    height: 250,
-
+    flex: 1.2,
+    height: 200,
     justifyContent: 'flex-end',
     alignItems: 'center',
     position: 'absolute',
@@ -290,6 +283,9 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: 'red',
     fontSize: 30,
+  },
+  picker: {
+
   }
 });
 
