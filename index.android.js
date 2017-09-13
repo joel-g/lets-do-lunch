@@ -160,7 +160,7 @@ export default class LetsDoLunch extends Component {
   render() {
     let display;
     let midPointButton;
-    let map = <View style={{flex: 1, backgroundColor: 'steelblue'}}>
+    let map = <View style={{flex: 1.2, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
@@ -194,22 +194,21 @@ export default class LetsDoLunch extends Component {
       }
     return (
       <View style={{flex: 1}}>
-        <View style={{flex: .14, backgroundColor: 'powderblue'}}>
+        <View style={{flex: .2, backgroundColor: 'powderblue'}}>
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
-        <View style={{flex: 1, backgroundColor: 'skyblue'}}>
+        <View style={{flex: 0.66, backgroundColor: 'skyblue'}}>
           <Button title="Set your location" onPress={() => this.pickLocation('user')} />
-          <Button color="blue" title="Pick your friend's location" onPress={() => this.pickLocation('friend')} />
+          <Button color="blue" title="Set your friend's location" onPress={() => this.pickLocation('friend')} />
           <TextInput
-          style={{height: 40}}
-          placeholder="keywords"
+          style={{height: 50}}
+          placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
           onChangeText={(text) => this.setState({keyword: text})}
           /> 
-          {midPointButton}
         </View>
-        <View style={{flex: 1}}>
+        <View style={{flex: 0.75}}>
           <Picker 
             style = {styles.picker}
             selectedValue={this.state.type}
@@ -229,6 +228,7 @@ export default class LetsDoLunch extends Component {
             <Picker.Item label='4 mi radius' value='6437' />
             <Picker.Item label='5 mi radius' value='8046' />
           </Picker> 
+          {midPointButton}
         </View>
         {map}
       </View>
@@ -267,9 +267,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-
-    height: 250,
-
+    flex: 1.2,
+    height: 200,
     justifyContent: 'flex-end',
     alignItems: 'center',
     position: 'absolute',
