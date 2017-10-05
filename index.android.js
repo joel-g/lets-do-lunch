@@ -22,12 +22,12 @@ export default class LetsDoLunch extends Component {
     super(props);
     this.state = {
       userLocation: {
-        latitude: 47.6067006,
-        longitude: -122.33250089999999
+        latitude: null,
+        longitude: null
       },
       friendLocation: {
-        latitude: 47.252876799999996,
-        longitude:  -122.4442906
+        latitude: null,
+        longitude: null
       },
       locationData: [],
       midPoint: null,
