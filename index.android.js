@@ -7,7 +7,8 @@ import {
   Button,
   TextInput,
   Picker,
-  Linking
+  Linking,
+  KeyboardAvoidingView
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
