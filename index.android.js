@@ -161,10 +161,12 @@ export default class LetsDoLunch extends Component {
   render() {
     let display;
     let midPointButton;
-    let map = <View style={{flex: 1.7, backgroundColor: 'steelblue'}}>
+    let map = <View style={{flex: 1.8, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
+          <Text> </Text>
+          <Text>{"Note: If the results don't seem to match your keyword, try expanding your search radius."}</Text>
         </View>;
     if (this.state.midPoint) {
       console.log('map reached')
@@ -201,7 +203,7 @@ export default class LetsDoLunch extends Component {
           </Text>
         </View>
         <View style={{flex: 1, backgroundColor: 'skyblue'}}>{/* Buttons & text input (but not dropdowns) */}
-          <View style={{flex: 2, flexDirection: 'row'}}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex: 1}}>
               <Button title="Set your location" onPress={() => this.pickLocation('user')} />
             </View>
@@ -209,15 +211,16 @@ export default class LetsDoLunch extends Component {
               <Button color="blue" title="Set friend's location" onPress={() => this.pickLocation('friend')} />
             </View>
           </View>
-          <TextInput
-          style={{height: 50}}
-          placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
-          onChangeText={(text) => this.setState({keyword: text})}
-          />
-          <View style={{flex: 2, flexDirection: 'row'}}>
-            <View style={{flex: 1}}>
+          <View style={{flex: 1}}>
+            <TextInput
+            style={{height: 50}}
+            placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
+            onChangeText={(text) => this.setState({keyword: text})}
+            />
+          </View>
+          <View style={{backgroundColor: 'white', flex: 1, flexDirection: 'row'}}>
+            <View style={styles.picker}>
               <Picker
-                style = {styles.picker}
                 selectedValue={this.state.type}
                 onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
                 <Picker.Item label='Restaurant' value='restaurant' />
@@ -226,9 +229,8 @@ export default class LetsDoLunch extends Component {
                 <Picker.Item label='Park' value='park' />
               </Picker>
             </View>
-            <View style={{flex: 1}}>
+            <View style={styles.picker}>
               <Picker
-                style = {styles.picker}
                 selectedValue={this.state.radius}
                 onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
                 <Picker.Item label='1 mi radius' value='1609' />
@@ -278,7 +280,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-    flex: 1.7,
+    flex: 1.8,
     justifyContent: 'flex-end',
     alignItems: 'center',
     bottom: 0,
@@ -290,7 +292,9 @@ const styles = StyleSheet.create({
 
   },
   picker: {
-    // backgroundColor: 'silver'
+    flex: 1,
+    borderWidth: 0.3,
+    borderColor: 'silver'
   }
 });
 
