@@ -160,7 +160,7 @@ export default class LetsDoLunch extends Component {
   render() {
     let display;
     let midPointButton;
-    let map = <View style={{flex: 1, backgroundColor: 'steelblue'}}>
+    let map = <View style={{flex: 1.2, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
@@ -200,8 +200,14 @@ export default class LetsDoLunch extends Component {
           </Text>
         </View>
         <View style={{flex: 1, backgroundColor: 'skyblue'}}>{/* Buttons & text input (but not dropdowns) */}
-          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
-          <Button color="blue" title="Set your friend's location" onPress={() => this.pickLocation('friend')} />
+          <View style={{flex: 2, flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Button title="Set your location" onPress={() => this.pickLocation('user')} />
+            </View>
+            <View style={{flex: 1}}>
+              <Button color="blue" title="Set friend's location" onPress={() => this.pickLocation('friend')} />
+            </View>
+          </View>
           <TextInput
           style={{height: 50}}
           placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
@@ -277,10 +283,6 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
 
-  },
-  button: {
-    backgroundColor: 'red',
-    fontSize: 30,
   },
   picker: {
 
