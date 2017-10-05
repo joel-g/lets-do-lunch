@@ -8,7 +8,8 @@ import {
   TextInput,
   Picker,
   Linking,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  ActivityIndicator
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
@@ -21,19 +22,20 @@ export default class LetsDoLunch extends Component {
     super(props);
     this.state = {
       userLocation: {
-        latitude: 47.6067006,
-        longitude: -122.33250089999999
+        latitude: null,
+        longitude: null
       },
       friendLocation: {
-        latitude: 47.252876799999996,
-        longitude:  -122.4442906
+        latitude: null,
+        longitude: null
       },
       locationData: [],
       midPoint: null,
       region: {},
       keyword: '',
       type: 'restaurant',
-      radius: 1609
+      radius: 1609,
+      searching: false
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -100,6 +102,7 @@ export default class LetsDoLunch extends Component {
 
     async findLocations(startLoc, destinationLoc) {
       try {
+        this.setState({ searching: true });
         console.log('SUP');
         let midLocation = await this.getMidPoint(startLoc, destinationLoc);
         console.log(midLocation);
@@ -111,6 +114,7 @@ export default class LetsDoLunch extends Component {
         console.log(8);
         console.log(resultsJson);
         this.setState({
+          searching: false,
           locationData: resultsJson.results.slice(0, 5),
           midPoint: midLocation,
           region: this.regionContainingPoints(resultsJson.results.slice(0, 5))
@@ -159,7 +163,6 @@ export default class LetsDoLunch extends Component {
 
 
   render() {
-    let display;
     let midPointButton;
     let map = <View style={{flex: 1.8, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
@@ -192,9 +195,12 @@ export default class LetsDoLunch extends Component {
         </MapView>
       </View>
     }
-    if (this.state.userLocation.latitude && this.state.friendLocation.latitude) {
+    if (this.state.userLocation.latitude && this.state.friendLocation.latitude && !this.state.searching) {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
+    else if (this.state.searching) {
+      midPointButton = <ActivityIndicator animating={true} size='large' />
+    }
     return (
       <View style={{flex: 1}}>{/* App-wide container */}
         <View style={{flex: .3, backgroundColor: 'powderblue'}}>{/* Header container */}
