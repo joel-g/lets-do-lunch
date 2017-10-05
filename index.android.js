@@ -7,7 +7,8 @@ import {
   Button,
   TextInput,
   Picker,
-  Linking
+  Linking,
+  KeyboardAvoidingView
 } from 'react-native';
 import RNGooglePlaces from 'react-native-google-places';
 import Polyline from '@mapbox/polyline';
@@ -156,14 +157,16 @@ export default class LetsDoLunch extends Component {
     this.setState({ region });
   }
 
-  
+
   render() {
     let display;
     let midPointButton;
-    let map = <View style={{flex: 1.2, backgroundColor: 'steelblue'}}>
+    let map = <View style={{flex: 1.8, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
+          <Text> </Text>
+          <Text>{"Note: If the results don't seem to match your keyword, try expanding your search radius."}</Text>
         </View>;
     if (this.state.midPoint) {
       console.log('map reached')
@@ -182,7 +185,7 @@ export default class LetsDoLunch extends Component {
               title={marker.name}
               description={marker.vicinity}
               key={marker.id}
-              
+
               onCalloutPress={() => {Linking.openURL('http://www.google.com/maps/search/?api=1&query=' + marker.name.split(" ").join("+") + `&query_place_id=${marker.place_id}`)}}
             />
           ))}
@@ -193,41 +196,51 @@ export default class LetsDoLunch extends Component {
       midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
     return (
-      <View style={{flex: 1}}>
-        <View style={{flex: .2, backgroundColor: 'powderblue'}}>
+      <View style={{flex: 1}}>{/* App-wide container */}
+        <View style={{flex: .3, backgroundColor: 'powderblue'}}>{/* Header container */}
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
         </View>
-        <View style={{flex: 0.66, backgroundColor: 'skyblue'}}>
-          <Button title="Set your location" onPress={() => this.pickLocation('user')} />
-          <Button color="blue" title="Set your friend's location" onPress={() => this.pickLocation('friend')} />
-          <TextInput
-          style={{height: 50}}
-          placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
-          onChangeText={(text) => this.setState({keyword: text})}
-          /> 
-        </View>
-        <View style={{flex: 0.75}}>
-          <Picker 
-            style = {styles.picker}
-            selectedValue={this.state.type}
-            onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
-            <Picker.Item label='Restaurant' value='restaurant' />
-            <Picker.Item label='Bar/Tavern' value='bar' />
-            <Picker.Item label='Café' value='cafe' />
-            <Picker.Item label='Park' value='park' />
-          </Picker> 
-          <Picker 
-            style = {styles.picker}
-            selectedValue={this.state.radius}
-            onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
-            <Picker.Item label='1 mi radius' value='1609' />
-            <Picker.Item label='2 mi radius' value='3218' />
-            <Picker.Item label='3 mi radius' value='4829' />
-            <Picker.Item label='4 mi radius' value='6437' />
-            <Picker.Item label='5 mi radius' value='8046' />
-          </Picker> 
+        <View style={{flex: 1, backgroundColor: 'skyblue'}}>{/* Buttons & text input (but not dropdowns) */}
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Button title="Set your location" onPress={() => this.pickLocation('user')} />
+            </View>
+            <View style={{flex: 1}}>
+              <Button color="blue" title="Set friend's location" onPress={() => this.pickLocation('friend')} />
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            <TextInput
+            style={{height: 50}}
+            placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
+            onChangeText={(text) => this.setState({keyword: text})}
+            />
+          </View>
+          <View style={{backgroundColor: 'white', flex: 1, flexDirection: 'row'}}>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={this.state.type}
+                onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
+                <Picker.Item label='Restaurant' value='restaurant' />
+                <Picker.Item label='Bar/Tavern' value='bar' />
+                <Picker.Item label='Café' value='cafe' />
+                <Picker.Item label='Park' value='park' />
+              </Picker>
+            </View>
+            <View style={styles.picker}>
+              <Picker
+                selectedValue={this.state.radius}
+                onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
+                <Picker.Item label='1 mi radius' value='1609' />
+                <Picker.Item label='2 mi radius' value='3218' />
+                <Picker.Item label='3 mi radius' value='4829' />
+                <Picker.Item label='4 mi radius' value='6437' />
+                <Picker.Item label='5 mi radius' value='8046' />
+              </Picker>
+            </View>
+          </View>
           {midPointButton}
         </View>
         {map}
@@ -267,25 +280,21 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-    flex: 1.2,
-    height: 200,
+    flex: 1.8,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    position: 'absolute',
     bottom: 0,
     right: 0,
     left: 0
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    
-  },
-  button: {
-    backgroundColor: 'red',
-    fontSize: 30,
+
   },
   picker: {
-
+    flex: 1,
+    borderWidth: 0.3,
+    borderColor: 'silver'
   }
 });
 
