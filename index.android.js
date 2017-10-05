@@ -160,7 +160,7 @@ export default class LetsDoLunch extends Component {
   render() {
     let display;
     let midPointButton;
-    let map = <View style={{flex: 1.2, backgroundColor: 'steelblue'}}>
+    let map = <View style={{flex: 1.7, backgroundColor: 'steelblue'}}>
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
@@ -194,7 +194,7 @@ export default class LetsDoLunch extends Component {
       }
     return (
       <View style={{flex: 1}}>{/* App-wide container */}
-        <View style={{flex: .2, backgroundColor: 'powderblue'}}>{/* Header container */}
+        <View style={{flex: .3, backgroundColor: 'powderblue'}}>{/* Header container */}
           <Text style={styles.heading}>
             {"Let's Do Lunch"}
           </Text>
@@ -213,25 +213,31 @@ export default class LetsDoLunch extends Component {
           placeholder="keywords: (lunch, cocktails, Mexican, burgers)"
           onChangeText={(text) => this.setState({keyword: text})}
           />
-          <Picker
-            style = {styles.picker}
-            selectedValue={this.state.type}
-            onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
-            <Picker.Item label='Restaurant' value='restaurant' />
-            <Picker.Item label='Bar/Tavern' value='bar' />
-            <Picker.Item label='Café' value='cafe' />
-            <Picker.Item label='Park' value='park' />
-          </Picker>
-          <Picker
-            style = {styles.picker}
-            selectedValue={this.state.radius}
-            onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
-            <Picker.Item label='1 mi radius' value='1609' />
-            <Picker.Item label='2 mi radius' value='3218' />
-            <Picker.Item label='3 mi radius' value='4829' />
-            <Picker.Item label='4 mi radius' value='6437' />
-            <Picker.Item label='5 mi radius' value='8046' />
-          </Picker>
+          <View style={{flex: 2, flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <Picker
+                style = {styles.picker}
+                selectedValue={this.state.type}
+                onValueChange={(itemValue, itemIndex) => this.setState({type:itemValue})} >
+                <Picker.Item label='Restaurant' value='restaurant' />
+                <Picker.Item label='Bar/Tavern' value='bar' />
+                <Picker.Item label='Café' value='cafe' />
+                <Picker.Item label='Park' value='park' />
+              </Picker>
+            </View>
+            <View style={{flex: 1}}>
+              <Picker
+                style = {styles.picker}
+                selectedValue={this.state.radius}
+                onValueChange={(itemValue, itemIndex) => this.setState({radius:itemValue})} >
+                <Picker.Item label='1 mi radius' value='1609' />
+                <Picker.Item label='2 mi radius' value='3218' />
+                <Picker.Item label='3 mi radius' value='4829' />
+                <Picker.Item label='4 mi radius' value='6437' />
+                <Picker.Item label='5 mi radius' value='8046' />
+              </Picker>
+            </View>
+          </View>
           {midPointButton}
         </View>
         {map}
@@ -271,11 +277,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   container: {
-    flex: 1.2,
-    height: 200,
+    flex: 1.7,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    position: 'absolute',
     bottom: 0,
     right: 0,
     left: 0
@@ -285,7 +289,7 @@ const styles = StyleSheet.create({
 
   },
   picker: {
-
+    // backgroundColor: 'silver'
   }
 });
 
