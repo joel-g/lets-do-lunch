@@ -35,7 +35,9 @@ export default class LetsDoLunch extends Component {
       keyword: '',
       type: 'restaurant',
       radius: 1609,
-      searching: false
+      searching: false,
+      setYourLocation: "Set your location",
+      setFriendsLocation: "Set friend's location"
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -63,9 +65,9 @@ export default class LetsDoLunch extends Component {
   pickLocation(person) {
     RNGooglePlaces.openPlacePickerModal().then((place) => {
       if (person === 'user') {
-        this.setState({userLocation: place})
+        this.setState({userLocation: place, setYourLocation: "Set your location ✔️"})
       } else {
-        this.setState({friendLocation: place})
+        this.setState({friendLocation: place, setFriendsLocation: "Set friend's location ✔️"})
       }
     // place represents user's selection from the
     // suggestions and it is a simplified Google Place object.
@@ -211,10 +213,10 @@ export default class LetsDoLunch extends Component {
         <View style={{flex: 1, backgroundColor: 'skyblue'}}>{/* Buttons & text input (but not dropdowns) */}
           <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex: 1}}>
-              <Button title="Set your location" onPress={() => this.pickLocation('user')} />
+              <Button title={this.state.setYourLocation} onPress={() => this.pickLocation('user')} />
             </View>
             <View style={{flex: 1}}>
-              <Button color="blue" title="Set friend's location" onPress={() => this.pickLocation('friend')} />
+              <Button color="blue" title={this.state.setFriendsLocation} onPress={() => this.pickLocation('friend')} />
             </View>
           </View>
           <View style={{flex: 1}}>
