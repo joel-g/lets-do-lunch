@@ -37,7 +37,7 @@ export default class LetsDoLunch extends Component {
       radius: 1609,
       searching: false,
       setYourLocation: "Set your location",
-      setFriendsLocation: "Set friend's location"
+      setFriendsLocation: "Set friend location"
     };
     this.onRegionChange = this.onRegionChange.bind(this);
   }
@@ -67,7 +67,7 @@ export default class LetsDoLunch extends Component {
       if (person === 'user') {
         this.setState({userLocation: place, setYourLocation: "Set your location ✔️"})
       } else {
-        this.setState({friendLocation: place, setFriendsLocation: "Set friend's location ✔️"})
+        this.setState({friendLocation: place, setFriendsLocation: "Set friend location ✔️"})
       }
     // place represents user's selection from the
     // suggestions and it is a simplified Google Place object.
@@ -170,7 +170,9 @@ export default class LetsDoLunch extends Component {
           <Text>Step 1: Set your location.</Text>
           <Text>Step 2: Set your friends location.</Text>
           <Text>Step 3 (optional): Add keywords for to narrow your search ('lunch', 'mexican', 'teriyaki')</Text>
-          <Text> </Text>
+          <Text>Step 4: Press 'Search'</Text>
+          <Text></Text>
+          <Text></Text>
           <Text>{"Note: If the results don't seem to match your keyword, try expanding your search radius."}</Text>
         </View>;
     if (this.state.midPoint) {
@@ -198,7 +200,7 @@ export default class LetsDoLunch extends Component {
       </View>
     }
     if (this.state.userLocation.latitude && this.state.friendLocation.latitude && !this.state.searching) {
-      midPointButton = <Button title="Find midpoint" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
+      midPointButton = <Button title="Search" onPress={() => this.findLocations(this.state.userLocation.latitude.toString() + ", " + this.state.userLocation.longitude.toString(), this.state.friendLocation.latitude.toString() + ", " + this.state.friendLocation.longitude.toString())} />
       }
     else if (this.state.searching) {
       midPointButton = <ActivityIndicator animating={true} size='large' />
